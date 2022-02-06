@@ -1,0 +1,41 @@
+# hostname of your service
+# (supports monorepositories! just add
+# one service section after the other)
+app:
+  # ==== how to build your application ====
+  build:
+    # select what technology should the
+    # build container be based on, can
+    # be different from service technology
+    # see docs for full list
+    base: [ go@1 ]
+    # *optional* add additional dependencies
+    # on top of base technology (combination
+    # will be cached for next build)
+    # prepare:
+    #   - apt-get something
+    #   - curl otherthing
+    # build your application
+    build:
+      - go build -o zps main.go
+    # select which files / folders to deploy
+    # after the build succesfully finished
+    deploy: [ zps ]
+    # *optional*: which files / folders
+    # to cache for the next use
+    # cache: [ ]
+  # ==== how to run your application ====
+  run:
+    # *optional* install dependencies that your
+    # runtime service requires (will be cached)
+    # prepare:
+    #   - apt-get something
+    #   - curl otherthing
+    # *optional*: triggered before each start/restart
+    # of your application, to eg. clean cache
+    # init:
+    #  - rm -rf ./cache
+    # how to start your application
+    init:
+      - echo "init command"
+    start: ./zps
