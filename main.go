@@ -3,24 +3,55 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gorilla/mux"
+	"log"
+	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
+	"strconv"
+	"time"
+	"zps/pkg/graceful"
 )
 
+const ZpsPort = "ZPS_PORT"
+
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := graceful.Context()
 	defer cancel()
-	signals := make(chan os.Signal)
-	signal.Notify(signals, syscall.SIGTERM, syscall.SIGINT)
+
+	listenPort := 8080
+	if envPort, has := os.LookupEnv(ZpsPort); has {
+		listenPort, _ = strconv.Atoi(envPort)
+	}
+
+	r := mux.NewRouter()
+	r.HandleFunc("/", handler)
+	srv := &http.Server{
+		Handler:      r,
+		Addr:         fmt.Sprintf(":%d", listenPort),
+		WriteTimeout: 5 * time.Second,
+		ReadTimeout:  5 * time.Second,
+	}
+
 	go func() {
-		select {
-		case <-ctx.Done():
-		case <-signals:
-			cancel()
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen error: %s\n", err)
 		}
 	}()
-	fmt.Println("waiting for sigkill")
+	log.Println("server started")
+
 	<-ctx.Done()
-	fmt.Println("app terminated")
+	log.Println("context done")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Fatalf("server shutdown failed: %+v\n", err)
+	}
+	log.Println("server shutdown")
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "handled with timestamp: %s", time.Now())
 }
