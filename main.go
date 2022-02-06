@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/sha512"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
@@ -24,7 +25,7 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/", handler)
+	r.PathPrefix("/").HandlerFunc(handler)
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         fmt.Sprintf(":%d", listenPort),
@@ -53,5 +54,6 @@ func main() {
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "handled with timestamp: %s", time.Now())
+	hash := sha512.New().Sum([]byte(time.Now().String()))
+	fmt.Fprintf(w, "handled with timestamp hash: %s", string(hash))
 }
