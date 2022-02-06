@@ -12,7 +12,7 @@ import (
 	"zps/pkg/graceful"
 )
 
-const ZpsPort = "ZPS_PORT"
+const ZpsPort = "ZPS_LISTEN_PORT"
 
 func main() {
 	ctx, cancel := graceful.Context()
