@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
@@ -53,7 +54,17 @@ func main() {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+
+	random := rand.New(rand.NewSource(time.Now().Unix()))
+	b := make([]byte, 512)
+	if _, err := random.Read(b); err != nil {
+		fmt.Println("error reading rand:", err)
+	}
+	hash := sha512.Sum512(b)
+
+	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	hash := sha512.New().Sum([]byte(time.Now().String()))
-	fmt.Fprintf(w, "handled with timestamp hash: %s", string(hash))
+
+	fmt.Fprintf(w, "handled with timestamp: %s\n\n", time.Now())
+	fmt.Fprint(w, string(hash[:]))
 }
