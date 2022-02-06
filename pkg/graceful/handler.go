@@ -24,6 +24,7 @@ func Context() (context.Context, context.CancelFunc) {
 	return ctx, cancel
 }
 
+// TerminationSignals from https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html
 func TerminationSignals() []os.Signal {
 	return []os.Signal{
 		syscall.SIGTERM,
