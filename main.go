@@ -66,5 +66,5 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	fmt.Fprintf(w, "handled with timestamp: %s\n\n", time.Now())
-	fmt.Fprint(w, string(hash[:]))
+	fmt.Fprintf(w, "%x", hash)
 }
