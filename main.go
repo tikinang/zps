@@ -2,15 +2,14 @@ package main
 
 import (
 	"context"
-	"crypto/sha512"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
-	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+	"zps/pkg/api"
 	"zps/pkg/graceful"
 )
 
@@ -25,8 +24,13 @@ func main() {
 		listenPort, _ = strconv.Atoi(envPort)
 	}
 
+	h := api.NewHandler()
 	r := mux.NewRouter()
-	r.PathPrefix("/").HandlerFunc(handler)
+	r.Path("/get/{key}").HandlerFunc(h.HandleGet)
+	r.Path("/create/{key}/{value}").HandlerFunc(h.HandleCreate)
+	r.Path("/remove/{key}").HandlerFunc(h.HandleRemove)
+	r.Path("/list").HandlerFunc(h.HandleList)
+	r.PathPrefix("/").HandlerFunc(h.HandleIndex)
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         fmt.Sprintf(":%d", listenPort),
@@ -51,20 +55,4 @@ func main() {
 		log.Fatalf("server shutdown failed: %+v\n", err)
 	}
 	log.Println("server shutdown")
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-
-	random := rand.New(rand.NewSource(time.Now().Unix()))
-	b := make([]byte, 512)
-	if _, err := random.Read(b); err != nil {
-		fmt.Println("error reading rand:", err)
-	}
-	hash := sha512.Sum512(b)
-
-	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(http.StatusOK)
-
-	fmt.Fprintf(w, "handled with timestamp: %s\n\n", time.Now())
-	fmt.Fprintf(w, "%x", hash)
 }
