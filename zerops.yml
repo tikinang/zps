@@ -1,14 +1,12 @@
 app:
   build:
     base: [ go@1 ]
-    prepare:
-      - echo "v1"
-      - go mod download
-      - go env
     build:
+      - echo "v1"
+      - go env
+      - go mod download
       - go build -o zps main.go
-    deploy:
-      - zps
+    deploy: [ zps ]
     cache: [] # FIXME mpavlicek: cache go mods
   run:
     prepare:
