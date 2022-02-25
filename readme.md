@@ -1,7 +1,7 @@
 ```yaml
 services:
-  - redis0
-    type redis@6
+  - hostname: redis0
+    type: redis@6
     mode: NON_HA
   - hostname: zps
     type: go@1
