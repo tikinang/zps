@@ -14,6 +14,7 @@ func main() {
 			break
 		}
 		fmt.Printf("logging time: %s\n", time.Now())
+		time.Sleep(time.Millisecond * 200)
 	}
 	fmt.Println("shutting down")
 }
