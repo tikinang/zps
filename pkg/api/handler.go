@@ -44,7 +44,9 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	env := os.Environ()
 	var jsonEnv map[string]string
 	if raw, has := os.LookupEnv("JSON_ENV"); has {
-		_ = json.Unmarshal([]byte(raw), &jsonEnv)
+		if err := json.Unmarshal([]byte(raw), &jsonEnv); err != nil {
+			fmt.Println("error unmarshal json:", err)
+		}
 	}
 
 	w.WriteHeader(http.StatusOK)
