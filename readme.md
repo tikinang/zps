@@ -12,7 +12,7 @@ services:
       JSON_ENV: |
         {
             "intro": "👋👋👋",
-            "dbHostname": "$db_hostname"
+            "dbHostname": "$db_hostname",
             "subdomain": "${zeropsSubdomain}"
         }
     buildFromGit: https://github.com/tikinang/zps@env
