@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +10,8 @@ import (
 	"time"
 	"zps/pkg/api"
 	"zps/pkg/graceful"
+
+	"github.com/gorilla/mux"
 )
 
 const ZpsPort = "ZPS_LISTEN_PORT"
@@ -26,10 +27,6 @@ func main() {
 
 	h := api.NewHandler()
 	r := mux.NewRouter()
-	r.Path("/get/{key}").HandlerFunc(h.HandleGet)
-	r.Path("/create/{key}/{value}").HandlerFunc(h.HandleCreate)
-	r.Path("/remove/{key}").HandlerFunc(h.HandleRemove)
-	r.Path("/list").HandlerFunc(h.HandleList)
 	r.PathPrefix("/").HandlerFunc(h.HandleIndex)
 	srv := &http.Server{
 		Handler:      r,
