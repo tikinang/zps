@@ -42,10 +42,10 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 	hash := sha512.Sum512(b)
 	env := os.Environ()
-	var jsonEnv map[string]string
+	var jsonEnv map[string]interface{}
 	if raw, has := os.LookupEnv("JSON_ENV"); has {
 		if err := json.Unmarshal([]byte(raw), &jsonEnv); err != nil {
-			fmt.Println("error unmarshal json:", err)
+			fmt.Println("error unmarshal json:", raw, err)
 		}
 	}
 
@@ -59,7 +59,7 @@ func (h *Handler) HandleIndex(w http.ResponseWriter, r *http.Request) {
 	if len(jsonEnv) > 0 {
 		fmt.Fprintf(w, "\nJSON_ENV\n")
 		for k, v := range jsonEnv {
-			fmt.Fprintf(w, "%s=%s\n", k, v)
+			fmt.Fprintf(w, "%s=%v\n", k, v)
 		}
 	}
 }
