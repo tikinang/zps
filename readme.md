@@ -13,7 +13,13 @@ services:
         {
             "intro": "👋👋👋",
             "dbHostname": "$db_hostname",
-            "subdomain": "${zeropsSubdomain}"
+            "subdomain": "${zeropsSubdomain}",
+            "below": "${JSON_ENV_BELOW|stringify}"
+        }
+      JSON_ENV_BELOW: |
+        {
+          "bar": "$db_hostname",
+          "baz": "👋👋👋"
         }
     buildFromGit: https://github.com/tikinang/zps@env
     enableSubdomainAccess: true
