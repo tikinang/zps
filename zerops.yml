@@ -5,3 +5,5 @@ zps:
       - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
     deploy: [zps]
     cache: [mod]
+  run:
+    start: ./zps
