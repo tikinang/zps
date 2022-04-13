@@ -1,12 +1,13 @@
 zps:
   build:
-    base: [ go@1 ]
+    base: [go@1]
     build:
       - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
-    deploy: [ zps ]
-    cache: [ mod ]
+    deploy: [zps]
+    cache: [mod]
   run:
     prepare:
+      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
       - apt-get update
       - apt-get install -y openssh-server
       - systemctl enable ssh
