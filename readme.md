@@ -4,6 +4,6 @@ services:
     type: go@1
     mode: NON_HA
     ports:
-      - port: 7100
+      - port: 8080
     buildFromGit: https://github.com/tikinang/zps@logging
 ```
