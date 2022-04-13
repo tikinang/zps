@@ -12,5 +12,5 @@ zps:
       - systemctl enable ssh
       - systemctl start ssh
       - mkdir -p ~/.ssh
-      - echo "$SSH_PUBLIC_KEY" > ~/.ssh/authorized_keys
+      - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
     start: ./zps

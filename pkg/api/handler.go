@@ -4,13 +4,14 @@ import (
 	"context"
 	"crypto/sha512"
 	"fmt"
-	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/gorilla/mux"
 )
 
 type Handler struct {
@@ -20,7 +21,7 @@ type Handler struct {
 
 func NewHandler() *Handler {
 	rdb := redis.NewClient(&redis.Options{
-		Addr: fmt.Sprintf("%s:%s", os.Getenv("redis0_hostname"), os.Getenv("redis0_port")),
+		Addr: fmt.Sprintf("%s:%s", os.Getenv("db_hostname"), os.Getenv("db_port")),
 		OnConnect: func(ctx context.Context, cn *redis.Conn) error {
 			log.Printf("connected to redis: %s", cn)
 			return nil
