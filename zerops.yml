@@ -1,4 +1,4 @@
-zps:
+node1:
   build:
     build:
       - echo "building"
