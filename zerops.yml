@@ -1,10 +1,4 @@
 zps:
-  build:
-    base: [go@1]
-    build:
-      - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
-    deploy: [zps]
-    cache: [mod]
   run:
     prepare:
       - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
@@ -14,4 +8,4 @@ zps:
       - systemctl start ssh
       - mkdir -p ~/.ssh
       - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
-    start: ./zps
+    start: while true; do echo "running"; sleep 5s; done
