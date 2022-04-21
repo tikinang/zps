@@ -17,12 +17,12 @@ node1:
       - echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
       - apt-get update
       - apt-get install elasticsearch
-      - systemctl stop zerops-prepare
-      - systemctl mask zerops-prepare
       - systemctl daemon-reload
       - systemctl enable elasticsearch
-      - mv elasticsearch.yml > /etc/elasticsearch/elasticsearch.yml
     init:
+      - systemctl stop zerops-prepare
+      - systemctl mask zerops-prepare
+      - mv elasticsearch.yml > /etc/elasticsearch/elasticsearch.yml
       - systemctl start elasticsearch
     start: while true; do echo "running"; sleep 5s; done
     envReplace:
