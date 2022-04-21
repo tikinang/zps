@@ -26,5 +26,5 @@ node1:
       - systemctl start elasticsearch
     start: while true; do echo "running"; sleep 5s; done
     envReplace:
-      target: [elasticsearch.yml]
+      target: [/etc/elasticsearch/elasticsearch.yml]
       delimiter: ["%%"]
