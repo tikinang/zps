@@ -1,4 +1,8 @@
 zps:
+  build:
+    build:
+      - echo "building"
+    deploy: [readme.md]
   run:
     prepare:
       - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
