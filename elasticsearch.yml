@@ -1,0 +1,11 @@
+cluster.name: zest
+discovery.type: single-node
+node.name: %%hostname%%
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: localhost
+http.port: 9200
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+xpack.security.http.ssl.enabled: false
+xpack.security.transport.ssl.enabled: false

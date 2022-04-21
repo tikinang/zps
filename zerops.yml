@@ -21,6 +21,10 @@ node1:
       - systemctl mask zerops-prepare
       - systemctl daemon-reload
       - systemctl enable elasticsearch
+      - mv elasticsearch.yml > /etc/elasticsearch/elasticsearch.yml
     init:
       - systemctl start elasticsearch
     start: while true; do echo "running"; sleep 5s; done
+    envReplace:
+      target: [elasticsearch.yml]
+      delimiter: ["%%"]
