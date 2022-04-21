@@ -2,7 +2,7 @@ node1:
   build:
     build:
       - echo "building"
-    deploy: [readme.md]
+    deploy: [elasticsearch.yml]
   run:
     prepare:
       - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
@@ -12,4 +12,15 @@ node1:
       - systemctl start ssh
       - mkdir -p ~/.ssh
       - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
+      - wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+      - apt-get install apt-transport-https
+      - echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+      - apt-get update
+      - apt-get install elasticsearch
+      - systemctl stop zerops-prepare
+      - systemctl mask zerops-prepare
+      - systemctl daemon-reload
+      - systemctl enable elasticsearch
+    init:
+      - systemctl start elasticsearch
     start: while true; do echo "running"; sleep 5s; done
