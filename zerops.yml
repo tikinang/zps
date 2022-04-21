@@ -21,7 +21,8 @@ node1:
       - systemctl enable elasticsearch
     init:
       - systemctl stop zerops-prepare
-      - mv elasticsearch.yml > /etc/elasticsearch/elasticsearch.yml
+      - systemctl disable zerops-prepare
+      - mv elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
       - systemctl start elasticsearch
     start: while true; do echo "running"; sleep 5s; done
     envReplace:
