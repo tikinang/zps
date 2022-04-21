@@ -9,14 +9,14 @@ services:
     ports:
       - port: 8080
     envVariables:
-      JSON_ENV: |
+      JSON_ENV: |-
         {
             "intro": "👋👋👋",
             "dbHostname": "$db_hostname",
             "subdomain": "${zeropsSubdomain}",
             "below": "${JSON_ENV_BELOW|stringify}"
         }
-      JSON_ENV_BELOW: |
+      JSON_ENV_BELOW: |-
         {
           "bar": "$db_hostname",
           "baz": "👋👋👋"
