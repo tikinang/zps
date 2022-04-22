@@ -1,7 +1,7 @@
 node1:
   build:
     build:
-      - echo "building"
+      - echo "building and building..."
     deploy: [elasticsearch.yml]
   run:
     prepare:
