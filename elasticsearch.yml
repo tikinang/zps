@@ -1,6 +1,7 @@
+node.name: %%ES_HOST%%
 cluster.name: zest
-discovery.type: single-node
-node.name: %%hostname%%
+cluster.initial_master_nodes: [%%ES_HOST_LIST%%]
+discovery.seed_hosts: [%%ES_HOST_LIST%%]
 path.data: /var/lib/elasticsearch
 path.logs: /var/log/elasticsearch
 network.host: 0.0.0.0
