@@ -15,7 +15,7 @@ elasticsearch:
       - mkdir -p ~/.ssh
       - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
       # install jq
-      - apt-get install jq
+      - apt-get install -y jq
       # install elasticsearch
       - wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
       - apt-get install apt-transport-https
