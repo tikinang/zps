@@ -17,11 +17,10 @@ node1:
       - echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
       - apt-get update
       - apt-get install elasticsearch
-      - mkdir /etc/systemd/system/elasticsearch.service.d
-      - echo -e "[Service]\nTimeoutStartSec=180" | sudo tee
-      - systemctl daemon-reload
+      - mkdir /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d
+      - echo -e "[Service]\nTimeoutStartSec=180" | sudo tee /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d/startup-timeout.conf
       - systemctl disable zerops-prepare
-      - systemctl mask zerops-prepare
+      - systemctl daemon-reload
     init:
       - cp elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
       - systemctl start elasticsearch
