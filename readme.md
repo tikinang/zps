@@ -2,7 +2,7 @@
 services:
   - hostname: elasticsearch
     type: go@1
-    mode: NON_HA
+    mode: HA
     ports:
       - port: 9200
       - port: 22
@@ -17,4 +17,11 @@ services:
       ES_HOST_LIST: ${ZEROPS_Hostnames|pipeToComma}
     buildFromGit: https://github.com/tikinang/zps@elasticsearch
     enableSubdomainAccess: true
+    verticalAutoscaling:
+      minCpu: 10
+      minRam: 8
+      minDisk: 5
+    horizontalAutoscaling:
+      minContainers: 3
+      maxContainers: 3
 ```
