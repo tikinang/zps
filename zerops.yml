@@ -23,7 +23,7 @@ elasticsearch:
       - apt-get update
       - apt-get install elasticsearch
       - mkdir /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d
-      - echo -e "[Service]\nTimeoutStartSec=180" | sudo tee /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d/startup-timeout.conf
+      - echo -e "[Service]\nTimeoutStartSec=300" | sudo tee /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d/startup-timeout.conf
       # disable zerops-prepare
       - systemctl disable zerops-prepare
     init:
