@@ -14,7 +14,7 @@
 ```
 
 # build client
-`GOOS=linux GOARCH=arm go build -ldflags="-X 'main.Username=<your_basic_auth_username>' -X 'main.Password=<your_basic_auth_password>' -X 'main.ServerAddress=<server_address>'" -o /media/tikinang/PB616W/stelabook_client cmd/client/main.go`
+`GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-X 'main.Username=<your_basic_auth_username>' -X 'main.Password=<your_basic_auth_password>' -X 'main.ServerAddress=<server_url>'" -o /media/tikinang/PB616W/stelabook_client cmd/client/main.go`
 
 contents of `/media/<user>/PB616W/applications/stelabook.app`
 ```shell
