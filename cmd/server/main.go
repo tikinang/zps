@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"sort"
 	"time"
 	"zps/pkg/graceful"
 
@@ -86,6 +87,7 @@ func (h *handler) basicAuth(w http.ResponseWriter, r *http.Request) bool {
 
 func (h *handler) handlePut(w http.ResponseWriter, r *http.Request) {
 	if !h.basicAuth(w, r) {
+		log.Println("unauthorized request")
 		return
 	}
 	defer r.Body.Close()
@@ -158,7 +160,15 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("print books.db notes")
 	w.WriteHeader(http.StatusOK)
+
+	var final []book
 	for _, b := range books {
+		final = append(final, b)
+	}
+	sort.Slice(final, func(i, j int) bool {
+		return final[i].title > final[j].title
+	})
+	for _, b := range final {
 		fmt.Fprintf(w, "%s - %s\n\n", b.title, b.authors)
 		for _, n := range b.notes {
 			fmt.Fprintln(w, n)
