@@ -92,7 +92,7 @@ func (h *handler) handlePut(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	f, err := os.Create("books.db")
+	f, err := os.Create("/mnt/storage/books.db")
 	if err != nil {
 		log.Println("create books.db file error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -121,7 +121,7 @@ type book struct {
 }
 
 func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
-	db, err := sql.Open("sqlite3", "file:books.db")
+	db, err := sql.Open("sqlite3", "file:/mnt/storage/books.db")
 	if err != nil {
 		log.Println("open books.db error:", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -137,20 +137,20 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	books := make(map[int]book)
+	books := make(map[string]book)
 	for rows.Next() {
-		var oid int
 		var authors, title, note string
-		if err := rows.Scan(&oid, &authors, &title, &note); err != nil {
+		if err := rows.Scan(&authors, &title, &note); err != nil {
 			log.Println("scan error:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		if b, has := books[oid]; has {
+		id := fmt.Sprintf("%s_%s", title, authors)
+		if b, has := books[id]; has {
 			b.notes = append(b.notes, note)
-			books[oid] = b
+			books[id] = b
 		} else {
-			books[oid] = book{
+			books[id] = book{
 				authors: authors,
 				title:   title,
 				notes:   []string{note},

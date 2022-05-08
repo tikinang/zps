@@ -1,6 +1,9 @@
 # import.yml
 
 ```yaml
+  - hostname: storage
+    type: shared-storage
+    mode: NON_HA
   - hostname: stelabook
     type: go@1
     mode: NON_HA

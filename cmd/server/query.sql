@@ -1,4 +1,4 @@
-SELECT Books.OID, Books.Authors, Books.Title, JSON_EXTRACT(Tags.Val, '$.text')
+SELECT Books.Authors, Books.Title, JSON_EXTRACT(Tags.Val, '$.text')
 FROM Tags
          JOIN Items on Tags.ItemID = Items.OID
          JOIN Books on Items.ParentID = Books.OID
