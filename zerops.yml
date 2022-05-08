@@ -1,4 +1,4 @@
-zps:
+stelabook:
   build:
     base: [go@1]
     build:
