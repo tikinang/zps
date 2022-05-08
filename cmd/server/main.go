@@ -119,10 +119,6 @@ type book struct {
 }
 
 func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
-	if !h.basicAuth(w, r) {
-		return
-	}
-
 	db, err := sql.Open("sqlite3", "file:books.db")
 	if err != nil {
 		log.Println("open books.db error:", err)
