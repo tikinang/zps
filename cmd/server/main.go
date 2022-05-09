@@ -38,7 +38,7 @@ func main() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatal("listen error:", err)
+			log.Fatalf("listen error: %v\n", err)
 		}
 	}()
 	log.Println("server started")
@@ -50,7 +50,7 @@ func main() {
 	defer shutdownCancel()
 
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Fatal("server shutdown failed:", err)
+		log.Fatalf("server shutdown failed: %v\n", err)
 	}
 	log.Println("server shutdown")
 }
@@ -98,7 +98,7 @@ func (h *handler) handlePut(w http.ResponseWriter, r *http.Request) {
 
 	f, err := os.Create("/mnt/storage/books.db")
 	if err != nil {
-		log.Println("create books.db file error:", err)
+		log.Printf("create books.db file error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -106,7 +106,7 @@ func (h *handler) handlePut(w http.ResponseWriter, r *http.Request) {
 
 	_, err = io.Copy(f, r.Body)
 	if err != nil {
-		log.Println("copy to books.db file error:", err)
+		log.Printf("copy to books.db file error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -140,14 +140,14 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 
 	t, err := template.ParseFS(tpl, "list.html")
 	if err != nil {
-		log.Println("parse template error:", err)
+		log.Printf("parse template error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	db, err := sql.Open("sqlite3", "file:/mnt/storage/books.db")
 	if err != nil {
-		log.Println("open books.db error:", err)
+		log.Printf("open books.db error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -155,7 +155,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := db.Query(query)
 	if err != nil {
-		log.Println("query error:", err)
+		log.Printf("query error: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -166,7 +166,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 		var authors, title, text, pageInfo string
 		var lastTagEdited int64
 		if err := rows.Scan(&authors, &title, &text, &pageInfo, &lastTagEdited); err != nil {
-			log.Println("scan error:", err)
+			log.Printf("scan error: %v\n", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -211,5 +211,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 		return sorted[i].lastTagEdited > sorted[j].lastTagEdited
 	})
 
-	_ = t.Execute(w, map[string]interface{}{"Books": sorted})
+	if err := t.Execute(w, map[string]interface{}{"Books": sorted}); err != nil {
+		log.Printf("execute template error: %v\n", err)
+	}
 }
