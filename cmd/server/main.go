@@ -162,7 +162,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 	books := make(map[string]Book)
 	for rows.Next() {
 		var authors, title, text, pageInfo string
-		if err := rows.Scan(&authors, &title, &text); err != nil {
+		if err := rows.Scan(&authors, &title, &text, &pageInfo); err != nil {
 			log.Println("scan error:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
