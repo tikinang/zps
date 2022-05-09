@@ -3,13 +3,17 @@ package main
 import (
 	"context"
 	"database/sql"
+	"embed"
 	_ "embed"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
+	"strconv"
 	"time"
 	"zps/pkg/graceful"
 
@@ -114,13 +118,31 @@ func (h *handler) handlePut(w http.ResponseWriter, r *http.Request) {
 //go:embed query.sql
 var query string
 
-type book struct {
-	authors string
-	title   string
-	notes   []string
+//go:embed list.html
+var tpl embed.FS
+
+type Book struct {
+	Authors string
+	Title   string
+	Notes   []Note
 }
 
+type Note struct {
+	Page int
+	Text string
+}
+
+var pageRegex = regexp.MustCompile(`pbr:/word\?page=(\d*)`)
+
 func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
+
+	t, err := template.ParseFS(tpl, "list.html")
+	if err != nil {
+		log.Println("parse template error:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
 	db, err := sql.Open("sqlite3", "file:/mnt/storage/books.db")
 	if err != nil {
 		log.Println("open books.db error:", err)
@@ -137,23 +159,36 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	books := make(map[string]book)
+	books := make(map[string]Book)
 	for rows.Next() {
-		var authors, title, note string
-		if err := rows.Scan(&authors, &title, &note); err != nil {
+		var authors, title, text, pageInfo string
+		if err := rows.Scan(&authors, &title, &text); err != nil {
 			log.Println("scan error:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+		var page int
+		matches := pageRegex.FindStringSubmatch(pageInfo)
+		if len(matches) == 2 {
+			page, _ = strconv.Atoi(matches[1])
+		}
+
 		id := fmt.Sprintf("%s_%s", title, authors)
 		if b, has := books[id]; has {
-			b.notes = append(b.notes, note)
+			note := Note{
+				Page: page,
+				Text: text,
+			}
+			b.Notes = append(b.Notes, note)
 			books[id] = b
 		} else {
-			books[id] = book{
-				authors: authors,
-				title:   title,
-				notes:   []string{note},
+			books[id] = Book{
+				Authors: authors,
+				Title:   title,
+				Notes: []Note{{
+					Page: page,
+					Text: text,
+				}},
 			}
 		}
 	}
@@ -161,18 +196,13 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 	log.Println("print books.db notes")
 	w.WriteHeader(http.StatusOK)
 
-	var final []book
+	var sorted []Book
 	for _, b := range books {
-		final = append(final, b)
+		sorted = append(sorted, b)
 	}
-	sort.Slice(final, func(i, j int) bool {
-		return final[i].title > final[j].title
+	sort.Slice(sorted, func(i, j int) bool {
+		return sorted[i].Title > sorted[j].Title
 	})
-	for _, b := range final {
-		fmt.Fprintf(w, "%s - %s\n\n", b.title, b.authors)
-		for _, n := range b.notes {
-			fmt.Fprintln(w, n)
-		}
-		fmt.Fprintln(w)
-	}
+
+	_ = t.Execute(w, map[string]interface{}{"Books": sorted})
 }

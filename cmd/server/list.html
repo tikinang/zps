@@ -1,0 +1,13 @@
+<html lang="en">
+<head>
+    <title>Stelabook</title>
+</head>
+<body>
+{{ range .Books }}
+<h1>{{ .Title }} - {{ .Authors }}</h1>
+{{ range .Notes -}}
+<p>{{ .Page }}: {{ .Text }}</p>
+{{ end -}}
+{{ end -}}
+</body>
+</html>
