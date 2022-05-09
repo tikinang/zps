@@ -4,4 +4,4 @@ FROM Tags
          JOIN Books on Items.ParentID = Books.OID
 WHERE Tags.TagID = 104
   AND JSON_EXTRACT(Tags.Val, '$.text') <> 'Bookmark'
-ORDER BY Tags.TimeEdt DESC;
+ORDER BY Tags.TimeEdt;
