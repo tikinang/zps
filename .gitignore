@@ -1,4 +1,6 @@
 .idea
 zcli
 books.db
+books.db-shm
+books.db-wal
 main

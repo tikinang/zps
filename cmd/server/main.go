@@ -125,6 +125,8 @@ type Book struct {
 	Authors string
 	Title   string
 	Notes   []Note
+
+	lastTagEdited int64
 }
 
 type Note struct {
@@ -162,7 +164,8 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 	books := make(map[string]Book)
 	for rows.Next() {
 		var authors, title, text, pageInfo string
-		if err := rows.Scan(&authors, &title, &text, &pageInfo); err != nil {
+		var lastTagEdited int64
+		if err := rows.Scan(&authors, &title, &text, &pageInfo, &lastTagEdited); err != nil {
 			log.Println("scan error:", err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -179,6 +182,9 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 				Page: page,
 				Text: text,
 			}
+			if b.lastTagEdited < lastTagEdited {
+				b.lastTagEdited = lastTagEdited
+			}
 			b.Notes = append(b.Notes, note)
 			books[id] = b
 		} else {
@@ -189,6 +195,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 					Page: page,
 					Text: text,
 				}},
+				lastTagEdited: lastTagEdited,
 			}
 		}
 	}
@@ -201,7 +208,7 @@ func (h *handler) handleGet(w http.ResponseWriter, r *http.Request) {
 		sorted = append(sorted, b)
 	}
 	sort.Slice(sorted, func(i, j int) bool {
-		return sorted[i].Title > sorted[j].Title
+		return sorted[i].lastTagEdited > sorted[j].lastTagEdited
 	})
 
 	_ = t.Execute(w, map[string]interface{}{"Books": sorted})
