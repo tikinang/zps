@@ -2,16 +2,25 @@ zps:
   build:
     base: [go@1]
     build:
-      - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
-    deploy: [zps]
+      - export GOMODCACHE="/build/source/mod" && go build -o temporal-worker main.go
+    deploy: [temporal-worker]
     cache: [mod]
   run:
     prepare:
-      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
+      # random thing, so prepare is activated
+      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079"
+      # install ssh
       - apt-get update
       - apt-get install -y openssh-server
       - systemctl enable ssh
       - systemctl start ssh
       - mkdir -p ~/.ssh
       - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
-    start: ./zps
+      # install docker
+#      - apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+#      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+#      - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+#      - apt-get update
+#      - apt-cache policy docker-ce
+#      - apt-get install -y docker-ce
+    start: ./temporal-worker
