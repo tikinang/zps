@@ -1,9 +1,9 @@
-zps:
+worker:
   build:
     base: [go@1]
     build:
-      - export GOMODCACHE="/build/source/mod" && go build -o temporal-worker main.go
-    deploy: [temporal-worker]
+      - export GOMODCACHE="/build/source/mod" && go build -o worker main.go
+    deploy: [worker]
     cache: [mod]
   run:
     prepare:
@@ -23,4 +23,4 @@ zps:
 #      - apt-get update
 #      - apt-cache policy docker-ce
 #      - apt-get install -y docker-ce
-    start: ./temporal-worker
+    start: ./worker
