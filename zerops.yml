@@ -17,10 +17,24 @@ worker:
       - mkdir -p ~/.ssh
       - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
       # install docker
-#      - apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-#      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-#      - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
-#      - apt-get update
-#      - apt-cache policy docker-ce
-#      - apt-get install -y docker-ce
+      - apt-get update
+      - apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+      - add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+      - apt-get update
+      - apt-get install -y docker-ce
+      - docker --version
+      - systemctl enable docker
+      - curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/bin/docker-compose
+      - chmod +x /usr/bin/docker-compose
+      - docker-compose --version
+      # install git
+      - apt-get update
+      - apt-get install -y git
+      - git --version
+      # clean apt
+      - apt-get autoremove
+      - apt-get autoclean
+      # pull temporal repo
+      - git clone
     start: ./worker
