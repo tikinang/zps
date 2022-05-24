@@ -58,7 +58,7 @@ func (h *Handler) Close() {
 }
 
 func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
-	b := make([]byte, 1024*64)
+	b := make([]byte, 1024*1024)
 	unixNano := time.Now().UnixNano()
 	random := rand.New(rand.NewSource(unixNano))
 	if _, err := random.Read(b); err != nil {
