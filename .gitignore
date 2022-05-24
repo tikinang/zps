@@ -1,2 +1,4 @@
 .idea
 zcli
+main
+stressor_file_*

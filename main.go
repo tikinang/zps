@@ -6,34 +6,22 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 	"zps/pkg/api"
 	"zps/pkg/graceful"
 )
 
-const ZpsPort = "ZPS_LISTEN_PORT"
-
 func main() {
 	ctx, cancel := graceful.Context()
 	defer cancel()
 
-	listenPort := 8080
-	if envPort, has := os.LookupEnv(ZpsPort); has {
-		listenPort, _ = strconv.Atoi(envPort)
-	}
-
 	h := api.NewHandler()
+	defer h.Close()
 	r := mux.NewRouter()
-	r.Path("/get/{key}").HandlerFunc(h.HandleGet)
-	r.Path("/create/{key}/{value}").HandlerFunc(h.HandleCreate)
-	r.Path("/remove/{key}").HandlerFunc(h.HandleRemove)
-	r.Path("/list").HandlerFunc(h.HandleList)
-	r.PathPrefix("/").HandlerFunc(h.HandleIndex)
+	r.PathPrefix("/").HandlerFunc(h.Handle)
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         fmt.Sprintf(":%d", listenPort),
+		Addr:         fmt.Sprintf(":%d", 8080),
 		WriteTimeout: 5 * time.Second,
 		ReadTimeout:  5 * time.Second,
 	}
