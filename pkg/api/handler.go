@@ -76,7 +76,8 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 
 	hash := sha512.Sum512(b)
 	key := strconv.FormatInt(unixNano, 10)
-	setCmd := h.rdb.Set(r.Context(), key, hash, 0)
+	stringHash := fmt.Sprintf("%x", hash)
+	setCmd := h.rdb.Set(r.Context(), key, stringHash, 0)
 	if err := setCmd.Err(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "%v\n", err)
@@ -88,8 +89,13 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%v\n", err)
 		return
 	}
+	if getCmd.Val() != stringHash {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "redis value differs: %s != %s\n", getCmd.Val(), stringHash)
+		return
+	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "handled with timestamp: %s\n\n", time.Now())
+	fmt.Fprintf(w, "handled with timestamp: %s\n", time.Now())
 	fmt.Fprintf(w, "%x\n", hash)
 }
