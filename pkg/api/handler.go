@@ -4,36 +4,21 @@ import (
 	"context"
 	"crypto/sha512"
 	"fmt"
-	"io"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
-	"sync/atomic"
 	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
 type Handler struct {
-	rdb   *redis.Client
-	files []io.WriteCloser
-	index *uint64
+	rdb *redis.Client
 }
 
-const numFiles = 128
-
 func NewHandler() *Handler {
-	var files []io.WriteCloser
-	for i := 0; i < numFiles; i++ {
-		f, err := os.Create(fmt.Sprintf("stressor_file_%d", time.Now().UnixNano()))
-		if err != nil {
-			log.Fatalf("failed to create file: %v\n", err)
-		}
-		files = append(files, f)
-	}
-
 	rdb := redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%s", os.Getenv("db_hostname"), os.Getenv("db_port")),
 		OnConnect: func(ctx context.Context, cn *redis.Conn) error {
@@ -44,34 +29,19 @@ func NewHandler() *Handler {
 	})
 
 	return &Handler{
-		rdb:   rdb,
-		files: files,
-		index: new(uint64),
+		rdb: rdb,
 	}
 
 }
 
-func (h *Handler) Close() {
-	for _, f := range h.files {
-		if err := f.Close(); err != nil {
-			log.Printf("error closing file: %v\n", err)
-		}
-	}
-}
+func (h *Handler) Close() {}
 
 func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
-	b := make([]byte, 1024*128)
+	b := make([]byte, 1024*1024)
 	unixNano := time.Now().UnixNano()
 	random := rand.New(rand.NewSource(unixNano))
 	if _, err := random.Read(b); err != nil {
 		fmt.Fprintf(w, "error reading rand: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	i := atomic.AddUint64(h.index, 1) % numFiles
-	if _, err := h.files[i].Write(b); err != nil {
-		fmt.Fprintf(w, "error writing to file: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
