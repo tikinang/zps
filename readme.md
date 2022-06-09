@@ -10,4 +10,8 @@ services:
     buildFromGit: https://github.com/tikinang/zps@stressor
     enableSubdomainAccess: true
     minContainers: 1
+    maxContainers: 4
+    verticalAutoscaling:
+      maxCpu: 8
+      maxRam: 4
 ```
