@@ -22,9 +22,11 @@ type Handler struct {
 	index *uint64
 }
 
+const numFiles = 128
+
 func NewHandler() *Handler {
 	var files []io.WriteCloser
-	for i := 0; i < 16; i++ {
+	for i := 0; i < numFiles; i++ {
 		f, err := os.Create(fmt.Sprintf("stressor_file_%d", time.Now().UnixNano()))
 		if err != nil {
 			log.Fatalf("failed to create file: %v\n", err)
@@ -58,7 +60,7 @@ func (h *Handler) Close() {
 }
 
 func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
-	b := make([]byte, 1024*1024)
+	b := make([]byte, 1024*128)
 	unixNano := time.Now().UnixNano()
 	random := rand.New(rand.NewSource(unixNano))
 	if _, err := random.Read(b); err != nil {
@@ -67,7 +69,7 @@ func (h *Handler) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	i := atomic.AddUint64(h.index, 1) % 16
+	i := atomic.AddUint64(h.index, 1) % numFiles
 	if _, err := h.files[i].Write(b); err != nil {
 		fmt.Fprintf(w, "error writing to file: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
