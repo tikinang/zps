@@ -2,8 +2,7 @@ stressor:
   build:
     base: [ go@1 ]
     build:
-      - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
+      - go build -o zps main.go
     deploy: [ zps ]
-    cache: [ mod ]
   run:
     start: ./zps
