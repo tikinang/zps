@@ -7,8 +7,6 @@ dummy:
     deploy:
       - zps
   run:
-    prepare:
-      - echo "prepare 3" > prepare.txt
     init:
       - echo "initializing"
     start: ./zps
