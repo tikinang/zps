@@ -7,6 +7,4 @@ dummy:
     deploy:
       - zps
   run:
-    prepare:
-      - echo "in prepare 2" > prepare.txt # change
     start: ./zps
