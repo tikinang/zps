@@ -8,5 +8,5 @@ dummy:
       - zps
   run:
     prepare:
-      - echo "in prepare 1" > prepare.txt # change
+      - echo "in prepare 2" > prepare.txt # change
     start: ./zps
