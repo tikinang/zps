@@ -1,8 +1,12 @@
-stressor:
+dummy:
   build:
-    base: [ go@1 ]
+    base:
+      - go@1
     build:
       - go build -o zps main.go
-    deploy: [ zps ]
+    deploy:
+      - zps
   run:
+    prepare:
+      - echo "in prepare 1" > prepare.txt # change
     start: ./zps

@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"time"
-	"zps/pkg/api"
 	"zps/pkg/graceful"
 )
 
@@ -15,15 +14,16 @@ func main() {
 	ctx, cancel := graceful.Context()
 	defer cancel()
 
-	h := api.NewHandler()
-	defer h.Close()
 	r := mux.NewRouter()
-	r.PathPrefix("/").HandlerFunc(h.Handle)
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "hello_world")
+	})
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         fmt.Sprintf(":%d", 8080),
-		WriteTimeout: 5 * time.Second,
-		ReadTimeout:  5 * time.Second,
+		Addr:         fmt.Sprintf(":%d", 1999),
+		WriteTimeout: 3 * time.Second,
+		ReadTimeout:  3 * time.Second,
 	}
 
 	go func() {

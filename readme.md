@@ -1,17 +1,11 @@
 ```yaml
 services:
-  - hostname: db
-    type: keydb@6
-    mode: NON_HA
-  - hostname: stressor
+  - hostname: dummy
     type: go@1
     ports:
-      - port: 8080
-    buildFromGit: https://github.com/tikinang/zps@stressor
+      - port: 1999
+    buildFromGit: https://github.com/tikinang/zps@dummy
     enableSubdomainAccess: true
     minContainers: 1
-    maxContainers: 4
-    verticalAutoscaling:
-      maxCpu: 8
-      maxRam: 4
+    maxContainers: 1
 ```
