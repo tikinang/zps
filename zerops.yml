@@ -9,4 +9,6 @@ dummy:
   run:
     init:
       - echo "initializing"
+      - mkdir -vp /var/www/lets/do/this
+      - touch /var/www/lets/do/this/touched
     start: ./zps
