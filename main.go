@@ -16,6 +16,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		doNothingWithAnything(nil)
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "hello_world")
 	})
@@ -44,3 +45,5 @@ func main() {
 	}
 	log.Println("server shutdown")
 }
+
+func doNothingWithAnything(_ any) {}
