@@ -6,17 +6,17 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os/signal"
 	"time"
-	"zps/pkg/graceful"
 )
 
 func main() {
-	ctx, cancel := graceful.Context()
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background())
+	defer stop()
 
 	r := mux.NewRouter()
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		doNothingWithAnything(nil)
+		doNothingWithAnythingGeneric(nil)
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintln(w, "hello_world")
 	})
@@ -29,21 +29,20 @@ func main() {
 
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen error: %s\n", err)
+			log.Fatalf("server: listen error: %s\n", err)
 		}
 	}()
-	log.Println("server started")
+	log.Printf("server: listening on %d\n", 1999)
 
 	<-ctx.Done()
-	log.Println("context done")
+	log.Println("context: done")
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
-
 	if err := srv.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("server shutdown failed: %+v\n", err)
+		log.Fatalf("server: shutdown failed: %+v\n", err)
 	}
-	log.Println("server shutdown")
+	log.Println("server: shutdown")
 }
 
-func doNothingWithAnything(_ any) {}
+func doNothingWithAnythingGeneric(_ any) {}

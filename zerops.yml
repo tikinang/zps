@@ -3,12 +3,8 @@ dummy:
     base:
       - go@1
     build:
-      - go build -o zps main.go
+      - go build -o dummy-go-server main.go
     deploy:
-      - zps
+      - dummy-go-server
   run:
-    init:
-      - echo "initializing"
-      - mkdir -vp /var/www/lets/do/this
-      - touch /var/www/lets/do/this/touched
-    start: ./zps
+    start: ./dummy-go-server
