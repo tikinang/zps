@@ -6,13 +6,14 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os/signal"
+	"syscall"
 	"time"
-	"zps/pkg/graceful"
 )
 
 func main() {
-	ctx, cancel := graceful.Context()
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
 	r := mux.NewRouter()
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
