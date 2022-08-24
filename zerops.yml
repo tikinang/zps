@@ -4,8 +4,12 @@ dummy:
       - go@1
     build:
       - go build -o zps main.go
+    #    build:
+    #      - export GOMODCACHE=/build/source/gomods; go build -o zps main.go
     deploy:
       - zps
+  #    cache:
+  #      - /gomods
   run:
     init:
       - echo "initializing"
