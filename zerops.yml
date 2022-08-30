@@ -3,6 +3,7 @@ dummy:
     base:
       - go@1
     build:
+      - env | grep "projectId\|serviceId"
       - go build -o zps main.go
     #    build:
     #      - export GOMODCACHE=/build/source/gomods; go build -o zps main.go
@@ -12,6 +13,7 @@ dummy:
   #      - /gomods
   run:
     init:
+      - env | grep "projectId\|serviceId"
       - echo "initializing"
       - mkdir -vp /var/www/lets/do/this
       - touch /var/www/lets/do/this/touched
