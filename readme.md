@@ -1,11 +1,7 @@
 ```yaml
 services:
-  - hostname: dummy
-    type: go@1
-    ports:
-      - port: 1999
-    buildFromGit: https://github.com/tikinang/zps@dummy
-    enableSubdomainAccess: true
+  - hostname: dummy3
+    type: ubuntu@22.04
     minContainers: 1
     maxContainers: 1
 ```

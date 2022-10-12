@@ -1,20 +1,17 @@
-dummy:
+dummy3:
   build:
     base:
-      - go@1
+      - ubuntu@22.04
     build:
-      - env | grep "projectId\|serviceId"
-      - go build -o zps main.go
-    #    build:
-    #      - export GOMODCACHE=/build/source/gomods; go build -o zps main.go
+      - apt-get update
+      - hostnamectl
     deploy:
-      - zps
-  #    cache:
-  #      - /gomods
+      - run.sh
   run:
+#    prepare:
+#      - apt-get update
+#      - hostnamectl
     init:
-      - env | grep "projectId\|serviceId"
-      - echo "initializing"
-      - mkdir -vp /var/www/lets/do/this
-      - touch /var/www/lets/do/this/touched
-    start: ./zps
+      - apt-get update
+      - hostnamectl
+    start: ./run.sh
