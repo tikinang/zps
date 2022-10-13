@@ -1,5 +1,7 @@
 #!/bin/bash
 
+nc -6 -l 2001 &
+
 while true
 do
   echo "running"

@@ -1,4 +1,4 @@
-dummy3:
+dummy:
   build:
     base:
       - ubuntu@22.04
@@ -8,10 +8,25 @@ dummy3:
     deploy:
       - run.sh
   run:
-#    prepare:
-#      - apt-get update
-#      - hostnamectl
+    prepare:
+      - apt-get update
+      - hostnamectl
     init:
       - apt-get update
       - hostnamectl
     start: ./run.sh
+old:
+  build:
+    base:
+      - go@1
+    build:
+      - apt-get update
+      - hostnamectl
+      - go build -o zps main.go
+    deploy:
+      - zps
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+    start: ./zps
