@@ -1,9 +1,6 @@
 #!/bin/bash
 
-nc -6 -l 2001 &
-
 while true
 do
-  echo "running"
-  sleep 10s
+  printf 'HTTP/1.1 200 OK\n\n%s' "$(cat index.html)" | nc -vl 1999
 done

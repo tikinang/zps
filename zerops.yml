@@ -7,13 +7,8 @@ dummy:
       - hostnamectl
     deploy:
       - run.sh
+      - index.html
   run:
-    prepare:
-      - apt-get update
-      - hostnamectl
-    init:
-      - apt-get update
-      - hostnamectl
     start: ./run.sh
 old:
   build:
