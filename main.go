@@ -6,36 +6,26 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
+	"os/signal"
+	"syscall"
 	"time"
-	"zps/pkg/api"
-	"zps/pkg/graceful"
 )
 
-const ZpsPort = "ZPS_LISTEN_PORT"
-
 func main() {
-	ctx, cancel := graceful.Context()
-	defer cancel()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	listenPort := 8080
-	if envPort, has := os.LookupEnv(ZpsPort); has {
-		listenPort, _ = strconv.Atoi(envPort)
-	}
-
-	h := api.NewHandler()
 	r := mux.NewRouter()
-	r.Path("/get/{key}").HandlerFunc(h.HandleGet)
-	r.Path("/create/{key}/{value}").HandlerFunc(h.HandleCreate)
-	r.Path("/remove/{key}").HandlerFunc(h.HandleRemove)
-	r.Path("/list").HandlerFunc(h.HandleList)
-	r.PathPrefix("/").HandlerFunc(h.HandleIndex)
+	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		doNothingWithAnything(nil)
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "hello_world")
+	})
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         fmt.Sprintf(":%d", listenPort),
-		WriteTimeout: 5 * time.Second,
-		ReadTimeout:  5 * time.Second,
+		Addr:         fmt.Sprintf(":%d", 1999),
+		WriteTimeout: 3 * time.Second,
+		ReadTimeout:  3 * time.Second,
 	}
 
 	go func() {
@@ -56,3 +46,5 @@ func main() {
 	}
 	log.Println("server shutdown")
 }
+
+func doNothingWithAnything(_ any) {}

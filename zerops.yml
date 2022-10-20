@@ -1,17 +1,47 @@
-zps:
+ubuntu:
   build:
-    base: [go@1]
+    base:
+      - ubuntu@22.04
     build:
-      - export GOMODCACHE="/build/source/mod" && go build -o zps main.go
-    deploy: [zps]
-    cache: [mod]
-  run:
-    prepare:
-      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079" # random thing, so prepare is activated
       - apt-get update
-      - apt-get install -y openssh-server
-      - systemctl enable ssh
-      - systemctl start ssh
-      - mkdir -p ~/.ssh
-      - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
+      - hostnamectl
+    deploy:
+      - run.sh
+      - index.html
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+    start: ./run.sh
+go:
+  build:
+    base:
+      - go@1
+    build:
+      - apt-get update
+      - hostnamectl
+      - go build -o zps main.go
+    deploy:
+      - zps
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
     start: ./zps
+dotnet:
+  build:
+    base:
+      - dotnet@6
+    build:
+      - apt-get update
+      - hostnamectl
+      - dotnet --info
+      - dotnet build -o app
+    deploy:
+      - app
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+      - dotnet --info
+    start: cd app && dotnet dnet.dll

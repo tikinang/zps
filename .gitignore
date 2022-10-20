@@ -1,3 +1,5 @@
 .idea
 zcli
+main
+stressor_file_*
 zps
