@@ -1,4 +1,4 @@
-dummy:
+ubuntu:
   build:
     base:
       - ubuntu@22.04
@@ -9,8 +9,11 @@ dummy:
       - run.sh
       - index.html
   run:
+    init:
+      - apt-get update
+      - hostnamectl
     start: ./run.sh
-old:
+go:
   build:
     base:
       - go@1
