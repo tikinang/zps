@@ -13,6 +13,7 @@ ubuntu:
       - apt-get update
       - hostnamectl
     start: ./run.sh
+
 go:
   build:
     base:
@@ -28,6 +29,7 @@ go:
       - apt-get update
       - hostnamectl
     start: ./zps
+
 dotnet:
   build:
     base:
@@ -45,3 +47,42 @@ dotnet:
       - hostnamectl
       - dotnet --info
     start: cd app && dotnet dnet.dll
+
+elasticsearch:
+  build:
+    build:
+      - apt-get update
+      - hostnamectl
+    deploy:
+      - elasticsearch.yml
+  run:
+    prepare:
+      # random thing, so prepare is activated
+      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079"
+      # install ssh
+      - apt-get update
+      - apt-get install -y openssh-server
+      - systemctl enable ssh
+      - systemctl start ssh
+      - mkdir -p ~/.ssh
+      - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
+      # install jq
+      - apt-get install -y jq
+      # install elasticsearch
+      - wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+      - apt-get install apt-transport-https
+      - echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list
+      - apt-get update
+      - apt-get install elasticsearch
+      - mkdir /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d
+      - echo -e "[Service]\nTimeoutStartSec=300" | sudo tee /etc/systemd/system/multi-user.target.wants/elasticsearch.service.d/startup-timeout.conf
+      # disable zerops-prepare
+      - systemctl disable zerops-prepare
+    init:
+      - cp elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+      - systemctl start elasticsearch
+    start: while true; do echo "running"; sleep 15s; done
+    envReplace:
+      target: [ elasticsearch.yml ]
+      delimiter: [ "%%" ]
+
