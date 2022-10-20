@@ -12,4 +12,10 @@ services:
       - port: 1999
     minContainers: 1
     maxContainers: 1
+  - hostname: dotnet
+    type: dotnet@6
+    ports:
+      - port: 1999
+    minContainers: 1
+    maxContainers: 1
 ```

@@ -25,3 +25,20 @@ old:
       - apt-get update
       - hostnamectl
     start: ./zps
+dotnet:
+  build:
+    base:
+      - dotnet@6
+    build:
+      - apt-get update
+      - hostnamectl
+      - dotnet --info
+      - dotnet build -o app
+    deploy:
+      - app
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+      - dotnet --info
+    start: cd app && dotnet dnet.dll
