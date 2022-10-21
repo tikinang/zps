@@ -5,6 +5,7 @@ ubuntu:
     build:
       - apt-get update
       - hostnamectl
+      - env
     deploy:
       - run.sh
       - index.html
@@ -12,6 +13,7 @@ ubuntu:
     init:
       - apt-get update
       - hostnamectl
+      - env
     start: ./run.sh
 
 go:
