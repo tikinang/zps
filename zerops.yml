@@ -3,17 +3,13 @@ ubuntu:
     base:
       - ubuntu@22.04
     build:
-      - apt-get update
-      - hostnamectl
-      - env
+      - env | grep XXX
     deploy:
       - run.sh
       - index.html
   run:
     init:
-      - apt-get update
-      - hostnamectl
-      - env
+      - env | grep XXX
     start: ./run.sh
 
 go:
