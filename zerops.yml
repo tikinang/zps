@@ -19,6 +19,7 @@ go:
     build:
       - apt-get update
       - hostnamectl
+      - go env
       - go build -o zps main.go
     deploy:
       - zps
@@ -26,6 +27,7 @@ go:
     init:
       - apt-get update
       - hostnamectl
+      - go env
     start: ./zps
 
 dotnet:
@@ -36,6 +38,8 @@ dotnet:
       - apt-get update
       - hostnamectl
       - dotnet --info
+      - dotnet --version
+      - dotnet --list-sdks
       - dotnet build -o app
     deploy:
       - app
@@ -44,6 +48,8 @@ dotnet:
       - apt-get update
       - hostnamectl
       - dotnet --info
+      - dotnet --version
+      - dotnet --list-runtimes
     start: cd app && dotnet dnet.dll
 
 elasticsearch:
@@ -84,3 +90,19 @@ elasticsearch:
       target: [ elasticsearch.yml ]
       delimiter: [ "%%" ]
 
+phpapache:
+  build:
+    base:
+      - php@8.1
+    build:
+      - apt-get update
+      - hostnamectl
+      - php -v
+    deploy:
+      - public
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+      - php -v
+    documentRoot: /public

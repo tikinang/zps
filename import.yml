@@ -1,4 +1,3 @@
-```yaml
 services:
 
   - hostname: ubuntu
@@ -35,4 +34,8 @@ services:
       minRam: 6
     minContainers: 3
     maxContainers: 3
-```
+
+  - hostname: phpapache
+    type: php-apache@8.1+2.4
+    minContainers: 1
+    maxContainers: 1
