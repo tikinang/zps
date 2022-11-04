@@ -3,13 +3,15 @@ ubuntu:
     base:
       - ubuntu@22.04
     build:
-      - env | grep XXX
+      - apt-get update
+      - hostnamectl
     deploy:
       - run.sh
       - index.html
   run:
     init:
-      - env | grep XXX
+      - apt-get update
+      - hostnamectl
     start: ./run.sh
 
 go:
@@ -38,8 +40,6 @@ dotnet:
       - apt-get update
       - hostnamectl
       - dotnet --info
-      - dotnet --version
-      - dotnet --list-sdks
       - dotnet build -o app
     deploy:
       - app
@@ -48,8 +48,6 @@ dotnet:
       - apt-get update
       - hostnamectl
       - dotnet --info
-      - dotnet --version
-      - dotnet --list-runtimes
     start: cd app && dotnet dnet.dll
 
 elasticsearch:
@@ -61,15 +59,6 @@ elasticsearch:
       - elasticsearch.yml
   run:
     prepare:
-      # random thing, so prepare is activated
-      - echo "93c0fc8b-7e66-4d25-bbcc-22823ab0d079"
-      # install ssh
-      - apt-get update
-      - apt-get install -y openssh-server
-      - systemctl enable ssh
-      - systemctl start ssh
-      - mkdir -p ~/.ssh
-      - echo "$SSH_PUBLIC_KEYS" > ~/.ssh/authorized_keys
       # install jq
       - apt-get install -y jq
       # install elasticsearch
@@ -106,3 +95,19 @@ phpapache:
       - hostnamectl
       - php -v
     documentRoot: /public
+
+phpnginx:
+  build:
+    base:
+      - php@8.1
+    build:
+      - apt-get update
+      - hostnamectl
+      - php -v
+    deploy:
+      - public/index.php
+  run:
+    init:
+      - apt-get update
+      - hostnamectl
+      - php -v

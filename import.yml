@@ -39,3 +39,34 @@ services:
     type: php-apache@8.1+2.4
     minContainers: 1
     maxContainers: 1
+
+  - hostname: phpnginx
+    type: php-nginx@8.1+1.20
+    minContainers: 1
+    maxContainers: 1
+    nginxConfig: |
+      server {
+        listen 80;
+        listen [::]:80;
+    
+        server_name _;
+    
+        root /var/www/public;
+    
+        location / {
+          try_files $uri /index.php$is_args$args;
+        }
+    
+        location ~* \.php$ {
+          fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+          fastcgi_split_path_info ^(.+\.php)(/.*)$;
+          include fastcgi_params;
+          
+          fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+          fastcgi_param DOCUMENT_ROOT $realpath_root;
+          internal;
+        }
+    
+        access_log syslog:server=unix:/dev/log,facility=local1 default_short;
+        error_log syslog:server=unix:/dev/log,facility=local1;
+      }

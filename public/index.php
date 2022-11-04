@@ -1,6 +1,6 @@
-<html>
+<html lang="en">
  <head>
-  <title>php</title>
+  <title>phpapache</title>
  </head>
  <body>
    <p><?php echo 'hello_world'; ?></p>
