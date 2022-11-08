@@ -41,7 +41,7 @@ services:
     maxContainers: 1
 
   - hostname: phpnginx
-    type: php-nginx@8.1+1.20
+    type: php-nginx@8.1+1.22
     minContainers: 1
     maxContainers: 1
     nginxConfig: |
